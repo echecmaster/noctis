@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickman Tractions</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000000; /* Fond très sombre pour faire ressortir l'aura */
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+        canvas {
+            background-color: #000000;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="stickmanCanvas" width="400" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('stickmanCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function draw() {
+            // Effacer le canvas à chaque frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Temps pour créer la boucle infinie de l'animation
+            const t = Date.now() / 400; 
+            
+            // Calcul de la progression de la traction (entre 0: en bas, et 1: en haut)
+            // Utilisation de sin() pour un mouvement fluide de montée et descente
+            const progress = (Math.sin(t) + 1) / 2;
+
+            // --- DESSIN DE LA BARRE ---
+            ctx.shadowBlur = 0; // Pas d'aura pour la barre
+            ctx.strokeStyle = '#444';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(50, 150);
+            ctx.lineTo(350, 150);
+            ctx.stroke();
+
+            // --- CONFIGURATION DE L'AURA DU PERSONNAGE ---
+            ctx.shadowBlur = 20; // Intensité de la lumière
+            ctx.shadowColor = 'white'; // Couleur de l'aura
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 6;
+            ctx.lineJoin = 'round';
+
+            // --- CALCUL DES POSITIONS DU CORPS ---
+            const barY = 150;
+            // Le corps monte (y diminue) quand "progress" augmente
+            const bodyTopY = 270 - (progress * 130); 
+            const bodyBottomY = bodyTopY + 110; 
+            const headY = bodyTopY - 35;
+
+            // 1. Tête
+            ctx.beginPath();
+            ctx.arc(200, headY, 30, 0, Math.PI * 2);
+            ctx.fillStyle = '#0a0a0a'; // Tête vide à l'intérieur
+            ctx.fill();
+            ctx.stroke();
+
+            // 2. Tronc
+            ctx.beginPath();
+            ctx.moveTo(200, bodyTopY);
+            ctx.lineTo(200, bodyBottomY);
+            ctx.stroke();
+
+            // 3. Bras (Les mains sont fixes sur la barre)
+            const leftHandX = 140;
+            const rightHandX = 260;
+            const handY = 150; // Alignées avec la barre
+
+            // Bras Gauche
+            ctx.beginPath();
+            ctx.moveTo(200, bodyTopY + 10); // Départ des épaules
+            // Les coudes s'écartent sur les côtés pendant la montée
+            const leftElbowX = 120 - (progress * 40);
+            const elbowY = bodyTopY + 30 + (progress * 10);
+            ctx.lineTo(leftElbowX, elbowY); // Coude
+            ctx.lineTo(leftHandX, handY);   // Main
+            ctx.stroke();
+
+            // Bras Droit
+            ctx.beginPath();
+            ctx.moveTo(200, bodyTopY + 10); // Départ des épaules
+            const rightElbowX = 280 + (progress * 40);
+            ctx.lineTo(rightElbowX, elbowY); // Coude
+            ctx.lineTo(rightHandX, handY);   // Main
+            ctx.stroke();
+
+            // 4. Jambes (Léger balancement dynamique)
+            const kneeY = bodyBottomY + 60 - (progress * 10);
+            const footY = kneeY + 60 - (progress * 5);
+            
+            // Jambe Gauche croisée
+            ctx.beginPath();
+            ctx.moveTo(200, bodyBottomY);
+            ctx.lineTo(180, kneeY);
+            ctx.lineTo(210, footY); // Pied gauche derrière
+            ctx.stroke();
+
+            // Jambe Droite croisée
+            ctx.beginPath();
+            ctx.moveTo(200, bodyBottomY);
+            ctx.lineTo(220, kneeY);
+            ctx.lineTo(190, footY); // Pied droit devant
+            ctx.stroke();
+
+            // Boucle d'animation
+            requestAnimationFrame(draw);
+        }
+
+        // Lancer l'animation
+        draw();
+    </script>
+</body>
+</html>

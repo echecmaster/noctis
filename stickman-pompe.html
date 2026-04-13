@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickman Pompes</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh; /* [cite: 2] */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000000; /* Fond sombre pour l'aura [cite: 2, 3] */
+            overflow: hidden;
+        }
+        canvas {
+            background-color: ;
+            border-radius: 10px; /* [cite: 5] */
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="stickmanCanvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('stickmanCanvas');
+        const ctx = canvas.getContext('2d'); // [cite: 7]
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Temps pour l'animation fluide [cite: 8, 9]
+            const t = Date.now() / 400;
+            const progress = (Math.sin(t) + 1) / 2; // 0 en haut, 1 en bas [cite: 9]
+
+            // --- LE SOL ---
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = '#444'; // [cite: 11]
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(50, 320);
+            ctx.lineTo(550, 320);
+            ctx.stroke();
+
+            // --- CONFIGURATION DE L'AURA BLANCHE ---
+            ctx.shadowBlur = 20; // [cite: 13, 14]
+            ctx.shadowColor = 'white'; // [cite: 15]
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 6; // [cite: 15]
+            ctx.lineCap = 'round';
+
+            // --- CALCUL DES POSITIONS ---
+            const footX = 150; 
+            const footY = 315; 
+            const bodyLength = 240; 
+            
+            // Angle de la planche : diminue quand on descend
+            const angle = 0.22 - (progress * 0.18); 
+            
+            // Position de l'épaule et de la tête
+            const shoulderX = footX + Math.cos(angle) * bodyLength;
+            const shoulderY = footY - Math.sin(angle) * bodyLength;
+            
+            const headX = shoulderX + Math.cos(angle) * 35;
+            const headY = shoulderY - Math.sin(angle) * 35;
+
+            const handX = shoulderX + 20; // Mains fixes au sol
+            const handY = 315;
+
+            // 1. Corps (Planche droite des pieds aux épaules)
+            ctx.beginPath();
+            ctx.moveTo(footX, footY);
+            ctx.lineTo(shoulderX, shoulderY);
+            ctx.stroke();
+
+            // 2. Tête (Vide à l'intérieur [cite: 21])
+            ctx.beginPath();
+            ctx.arc(headX, headY, 25, 0, Math.PI * 2); // [cite: 20]
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fill();
+            ctx.stroke();
+
+            // 3. Bras (Épaule -> Coude -> Main)
+            const elbowX = shoulderX - 25 + (progress * 15);
+            const elbowY = shoulderY + (handY - shoulderY) / 2 - 5;
+
+            ctx.beginPath();
+            ctx.moveTo(shoulderX, shoulderY);
+            ctx.lineTo(elbowX, elbowY); // Coude [cite: 31]
+            ctx.lineTo(handX, handY);   // Main [cite: 32]
+            ctx.stroke();
+
+            requestAnimationFrame(draw); // Boucle d'animation [cite: 39]
+        }
+
+        draw();
+    </script>
+</body>
+</html>

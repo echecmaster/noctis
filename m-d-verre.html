@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Motivation vs Discipline - Ultra Réaliste</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #000000, #000000 100%, #000000);
+  font-family: Arial, sans-serif;
+  color: white;
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  gap: 160px;
+}
+
+.glass-container {
+  text-align: center;
+}
+
+.label {
+  margin-bottom: 25px;
+  font-size: 20px;
+  letter-spacing: 3px;
+}
+
+/* ROBINET ULTRA */
+.tap {
+  position: relative;
+  width: 120px;
+  height: 70px;
+  margin: 0 auto 10px;
+}
+
+.tap .body {
+  position: absolute;
+  width: 90px;
+  height: 25px;
+  background: linear-gradient(90deg, #666, #fff, #888);
+  border-radius: 12px;
+  top: 15px;
+  left: 0;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 0 0 10px rgba(255,255,255,0.4);
+}
+
+.tap .spout {
+  position: absolute;
+  width: 25px;
+  height: 45px;
+  background: linear-gradient(#fff, #777);
+  right: 0;
+  top: 5px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 8px rgba(255,255,255,0.7);
+}
+
+/* JET REALISTE */
+.stream {
+  position: absolute;
+  top: 60px;
+  right: 12px;
+  width: 10px;
+  height: 160px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(0,180,255,0.6));
+  border-radius: 50px;
+  filter: blur(1px);
+  animation: flow 0.25s infinite alternate;
+}
+
+@keyframes flow {
+  from { transform: scaleX(1) scaleY(1); }
+  to { transform: scaleX(0.8) scaleY(1.05); }
+}
+
+/* GOUTTES PHYSIQUES */
+.drop {
+  position: absolute;
+  top: 60px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 30% 30%, #fff, #66ccff);
+  border-radius: 50%;
+  animation: fall 1.2s infinite;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 1; }
+  80% { transform: translateY(160px) scale(0.8); opacity: 1; }
+  100% { transform: translateY(170px) scale(0.5); opacity: 0; }
+}
+
+/* VERRE */
+.glass {
+  width: 140px;
+  height: 220px;
+  border: 3px solid rgba(255,255,255,0.8);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 30px rgba(255,255,255,0.4);
+}
+
+/* EAU ULTRA */
+.water {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to top, #0077ff, #00d4ff);
+  overflow: hidden;
+}
+
+/* VAGUES */
+.wave {
+  position: absolute;
+  width: 200%;
+  height: 40px;
+  background: rgba(255,255,255,0.4);
+  opacity: 0.5;
+  border-radius: 40%;
+  animation: waveMove 4s linear infinite;
+}
+
+.wave:nth-child(2) {
+  top: 10px;
+  opacity: 0.3;
+  animation-duration: 6s;
+}
+
+@keyframes waveMove {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* REMPLISSAGE */
+.motivation .water {
+  animation: fillMotivation 6s ease-in-out infinite;
+}
+
+.discipline .water {
+  animation: fillDiscipline 16s linear infinite;
+}
+
+@keyframes fillMotivation {
+  0% { height: 0%; }
+  40% { height: 40%; }
+  70% { height: 40%; }
+  100% { height: 0%; }
+}
+
+@keyframes fillDiscipline {
+  0% { height: 0%; }
+  94% { height: 100%; }
+  100% { height: 0%; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="glass-container motivation">
+    <div class="label">MOTIVATION</div>
+    <div class="tap">
+      <div class="body"></div>
+      <div class="spout"></div>
+      <div class="stream"></div>
+    </div>
+    <div class="glass">
+      <div class="water">
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-container discipline">
+    <div class="label">DISCIPLINE</div>
+    <div class="tap">
+      <div class="body"></div>
+      <div class="spout"></div>
+      <div class="drop"></div>
+    </div>
+    <div class="glass">
+      <div class="water">
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

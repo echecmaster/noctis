@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discipline vs Motivation - Final</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black; /* [cite: 3] */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .tiktok-scene {
+            position: relative;
+            width: 100vw;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 800px;
+        }
+
+        /* --- LA MONTAGNE --- */
+        .mountain {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            height: 400px;
+            background: linear-gradient(to bottom, #333333, #111111);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            border-bottom: 3px solid #222;
+        }
+
+        /* --- LE DRAPEAU --- */
+        .flag-container {
+            position: absolute;
+            bottom: 490px;
+            left: calc(50% + 2px);
+            display: flex;
+            align-items: flex-end;
+            z-index: 10;
+        }
+        .pole {
+            width: 3px;
+            height: 45px;
+            background: white;
+            box-shadow: 0 0 5px white;
+        }
+        .fabric {
+            position: absolute;
+            bottom: 20px;
+            left: 3px;
+            width: 35px;
+            height: 25px;
+            background: yellow;
+            box-shadow: 0 0 15px yellow;
+            clip-path: polygon(0 0, 100% 10%, 90% 50%, 100% 90%, 0 100%);
+            transform-origin: left center;
+            animation: wave 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave {
+            0% { transform: scaleX(1) skewY(8deg); }
+            100% { transform: scaleX(0.85) skewY(-8deg); }
+        }
+
+        /* --- TEXTE SUCCESS --- */
+        .victory-text {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffff00;
+            font-size: 45px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px #ffff00, 0 0 30px #ffff00;
+            opacity: 0;
+            z-index: 30;
+            animation: showVictory 10s linear infinite;
+        }
+
+        @keyframes showVictory {
+            0%, 79% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+            80% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+            83%, 98% { opacity: 1; transform: translateX(-50%) scale(1); }
+            100% { opacity: 0; }
+        }
+
+        /* --- LES PERSONNAGES --- */
+        .climber {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .label {
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: -5px;
+            text-shadow: 0 0 8px white;
+        }
+
+        .runner-canvas {
+            width: 60px;
+            height: 80px;
+            filter: drop-shadow(0 0 6px white);
+        }
+
+        /* MOTIVATION : Miroir + Animation Opacité */
+        #motivation {
+            left: calc(50% - 160px - 30px);
+            bottom: 100px;
+            animation: climbMotivation 10s linear infinite;
+        }
+        
+        #motivation .runner-canvas {
+            transform: scaleX(-1);
+        }
+
+        /* DISCIPLINE */
+        #discipline {
+            left: calc(50% + 160px - 30px);
+            bottom: 100px;
+            animation: climbDiscipline 10s linear infinite;
+        }
+
+        /* KEYFRAMES */
+        @keyframes climbMotivation {
+            0% { transform: translate(0, 0); opacity: 1; }
+            /* À 3 secondes (30%), il s'arrête et commence à s'effacer */
+            30% { transform: translate(80px, -200px); opacity: 1; }
+            35%, 100% { transform: translate(80px, -200px); opacity: 0.5; }
+        }
+
+        @keyframes climbDiscipline {
+            0% { transform: translate(0, 0); }
+            80% { transform: translate(-160px, -400px); }
+            100% { transform: translate(-160px, -400px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tiktok-scene">
+        <div class="victory-text">Success</div>
+
+        <div class="flag-container">
+            <div class="pole"></div>
+            <div class="fabric"></div>
+        </div>
+
+        <div class="mountain"></div>
+
+        <div class="climber" id="motivation">
+            <div class="label">Motivation</div>
+            <canvas id="canvas-motivation" class="runner-canvas" width="120" height="160"></canvas>
+        </div>
+
+        <div class="climber" id="discipline">
+            <div class="label">Discipline</div>
+            <canvas id="canvas-discipline" class="runner-canvas" width="120" height="160"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvasMot = document.getElementById('canvas-motivation');
+        const ctxMot = canvasMot.getContext('2d');
+        const canvasDisc = document.getElementById('canvas-discipline');
+        const ctxDisc = canvasDisc.getContext('2d');
+
+        let timeMot = 0;
+        let timeDisc = 0;
+        const speed = 0.08;
+        const loopDuration = 10000; 
+        let startTime = Date.now();
+
+        // Fonction de dessin basée sur ton code source [cite: 10-27]
+        function drawStickman(ctx, time, canvas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.strokeStyle = 'white'; // [cite: 7]
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            const bounce = Math.abs(Math.sin(time)) * 8; // [cite: 12]
+            ctx.translate(0, bounce - 10);
+
+            // Calculs trigonométriques pour la course [cite: 13-16]
+            const legAngle1 = Math.sin(time) * 1.2;
+            const legAngle2 = Math.sin(time + Math.PI) * 1.2;
+            const kneeAngle1 = Math.max(0, Math.sin(time - Math.PI/4) * 1.5);
+            const kneeAngle2 = Math.max(0, Math.sin(time + Math.PI - Math.PI/4) * 1.5);
+
+            const armAngle1 = Math.sin(time + Math.PI) * 1.2;
+            const armAngle2 = Math.sin(time) * 1.2;
+            const elbowAngle1 = -Math.abs(Math.sin(time + Math.PI)) * 1.5;
+            const elbowAngle2 = -Math.abs(Math.sin(time)) * 1.5;
+
+            function drawSegment(x1, y1, angle, length) {
+                const x2 = x1 + Math.sin(angle) * length;
+                const y2 = y1 + Math.cos(angle) * length;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                return { x: x2, y: y2 };
+            }
+
+            // Dessin de la tête [cite: 19]
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 40, 12, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Dessin du corps [cite: 21]
+            const neck = { x: centerX, y: centerY - 28 };
+            const hip = { x: centerX + 5, y: centerY + 15 };
+            ctx.beginPath();
+            ctx.moveTo(neck.x, neck.y);
+            ctx.lineTo(hip.x, hip.y);
+            ctx.stroke();
+
+            // Bras et jambes [cite: 23-27]
+            const shoulder = { x: centerX + 2, y: centerY - 20 };
+            const elbow1 = drawSegment(shoulder.x, shoulder.y, armAngle1, 20);
+            drawSegment(elbow1.x, elbow1.y, armAngle1 + elbowAngle1, 20);
+
+            const knee1 = drawSegment(hip.x, hip.y, legAngle1, 25);
+            drawSegment(knee1.x, knee1.y, legAngle1 + kneeAngle1, 25);
+
+            const knee2 = drawSegment(hip.x, hip.y, legAngle2, 25);
+            drawSegment(knee2.x, knee2.y, legAngle2 + kneeAngle2, 25);
+
+            const elbow2 = drawSegment(shoulder.x, shoulder.y, armAngle2, 20);
+            drawSegment(elbow2.x, elbow2.y, armAngle2 + elbowAngle2, 20);
+
+            ctx.restore();
+        }
+
+        // Boucle d'animation synchronisée [cite: 28]
+        function animate() {
+            let elapsed = (Date.now() - startTime) % loopDuration;
+
+            if (elapsed < 3000) { timeMot += speed; }
+            if (elapsed < 8000) { timeDisc += speed; }
+
+            if (elapsed < 50) { 
+                timeMot = 0; 
+                timeDisc = 0; 
+            }
+
+            drawStickman(ctxMot, timeMot, canvasMot);
+            drawStickman(ctxDisc, timeDisc, canvasDisc);
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

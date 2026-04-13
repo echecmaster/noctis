@@ -1,0 +1,123 @@
+Put your HTML text here<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stickman Runner</title>
+    <style>
+        /* CSS pour le fond noir et le centrage */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            /* Optionnel : ajoute une légère lueur globale au canevas */
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="stickmanCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // JavaScript pour l'animation
+        const canvas = document.getElementById('stickmanCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let time = 0;
+
+        function draw() {
+            // Effacer le canevas à chaque frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+
+            // Propriétés du dessin (Blanc avec lueur)
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.shadowBlur = 20; // Intensité de la lueur
+            ctx.shadowColor = 'white'; // Couleur de la lueur
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Vitesse de l'animation
+            const speed = 0.08;
+            time += speed;
+
+            // Calcul de l'effet de rebond (le corps monte et descend en courant)
+            const bounce = Math.abs(Math.sin(time)) * 8;
+            ctx.translate(0, bounce - 10);
+
+            // Calcul trigonométrique des angles pour le mouvement de course
+            const legAngle1 = Math.sin(time) * 1.2;
+            const legAngle2 = Math.sin(time + Math.PI) * 1.2;
+            const kneeAngle1 = Math.max(0, Math.sin(time - Math.PI/4) * 1.5);
+            const kneeAngle2 = Math.max(0, Math.sin(time + Math.PI - Math.PI/4) * 1.5);
+
+            const armAngle1 = Math.sin(time + Math.PI) * 1.2;
+            const armAngle2 = Math.sin(time) * 1.2;
+            const elbowAngle1 = -Math.abs(Math.sin(time + Math.PI)) * 1.5;
+            const elbowAngle2 = -Math.abs(Math.sin(time)) * 1.5;
+
+            // Fonction utilitaire pour tracer des lignes
+            function drawSegment(x1, y1, angle, length) {
+                const x2 = x1 + Math.sin(angle) * length;
+                const y2 = y1 + Math.cos(angle) * length;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+                return { x: x2, y: y2 };
+            }
+
+            // Dessin de la tête
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 65, 15, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Dessin du corps (légèrement penché en avant)
+            const neck = { x: centerX, y: centerY - 50 };
+            const hip = { x: centerX + 5, y: centerY + 10 };
+            ctx.beginPath();
+            ctx.moveTo(neck.x, neck.y);
+            ctx.lineTo(hip.x, hip.y);
+            ctx.stroke();
+
+            // Bras gauche (à l'arrière)
+            const shoulder = { x: centerX + 2, y: centerY - 40 };
+            const elbow1 = drawSegment(shoulder.x, shoulder.y, armAngle1, 30);
+            drawSegment(elbow1.x, elbow1.y, armAngle1 + elbowAngle1, 25);
+
+            // Jambe gauche (à l'arrière)
+            const knee1 = drawSegment(hip.x, hip.y, legAngle1, 35);
+            drawSegment(knee1.x, knee1.y, legAngle1 + kneeAngle1, 35);
+
+            // Jambe droite (au premier plan)
+            const knee2 = drawSegment(hip.x, hip.y, legAngle2, 35);
+            drawSegment(knee2.x, knee2.y, legAngle2 + kneeAngle2, 35);
+
+            // Bras droit (au premier plan)
+            const elbow2 = drawSegment(shoulder.x, shoulder.y, armAngle2, 30);
+            drawSegment(elbow2.x, elbow2.y, armAngle2 + elbowAngle2, 25);
+
+            ctx.restore();
+
+            // Boucle d'animation
+            requestAnimationFrame(draw);
+        }
+
+        // Lancer l'animation
+        draw();
+    </script>
+</body>
+</html>

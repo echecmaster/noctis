@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Animation stylée</title>
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(circle at center, #0a0a0a, #000);
+    overflow: hidden;
+}
+
+.scene {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.lane {
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+}
+
+/* glow de fond */
+.lane::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent);
+    pointer-events: none;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.ball {
+    position: absolute;
+    left: 20%;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* styles balles */
+.lane:nth-child(1) .ball {
+    background: #ff8844;
+    box-shadow: 0 0 10px #ff8844;
+}
+
+.lane:nth-child(2) .ball {
+    background: #44ccff;
+    box-shadow: 0 0 12px #44ccff;
+}
+
+.lane:nth-child(3) .ball {
+    background: linear-gradient(45deg, #00ffcc, #00ff66);
+    box-shadow: 0 0 20px #00ffcc;
+}
+</style>
+</head>
+<body>
+
+<div class="scene">
+    <div class="lane"><canvas></canvas><div class="ball"></div></div>
+    <div class="lane"><canvas></canvas><div class="ball"></div></div>
+    <div class="lane"><canvas></canvas><div class="ball"></div></div>
+</div>
+
+<script>
+const lanes = document.querySelectorAll(".lane");
+
+lanes.forEach((lane, index) => {
+    const canvas = lane.querySelector("canvas");
+    const ctx = canvas.getContext("2d");
+    const ball = lane.querySelector(".ball");
+
+    canvas.width = window.innerWidth;
+    canvas.height = 120;
+
+    let offset = 0;
+
+    const configs = [
+        { roughness: 35, speed: 1, smooth: 0.12 },
+        { roughness: 20, speed: 2.5, smooth: 0.2 },
+        { roughness: 6,  speed: 7, smooth: 0.35 }
+    ];
+
+    const { roughness, speed, smooth } = configs[index];
+
+    let currentY = canvas.height / 2;
+
+    function terrain(x) {
+        if (index === 2) {
+            return Math.sin((x + offset) * 0.01) * 6;
+        }
+
+        return Math.sin((x + offset) * 0.02) * roughness +
+               Math.sin((x + offset) * 0.04) * roughness * 0.3;
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 🎨 terrain stylé
+        let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+
+        if (index === 0) {
+            grad.addColorStop(0, "#552200");
+            grad.addColorStop(1, "#ff8844");
+        } else if (index === 1) {
+            grad.addColorStop(0, "#003344");
+            grad.addColorStop(1, "#44ccff");
+        } else {
+            grad.addColorStop(0, "#002222");
+            grad.addColorStop(1, "#00ffcc");
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height);
+
+        for (let x = 0; x < canvas.width; x++) {
+            let y = canvas.height / 2 + terrain(x);
+            ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // position balle
+        let ballX = canvas.width * 0.2;
+        let targetY = canvas.height / 2 + terrain(ballX);
+
+        currentY += (targetY - currentY) * smooth;
+
+        const radius = 20;
+        currentY = Math.max(radius, Math.min(canvas.height - radius, currentY));
+
+        ball.style.top = (currentY - radius) + "px";
+
+        // rotation + effet vitesse
+        let rotation = offset * speed * 2;
+        let scale = 1 + Math.min(speed / 20, 0.2);
+
+        ball.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+
+        offset += speed;
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+});
+</script>
+
+</body>
+</html>
