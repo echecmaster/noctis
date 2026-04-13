@@ -3,244 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Motivation</title>
+    <title>Menu des Animations</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;600&display=swap');
-
         body {
-            background-color: #0d0e15; /* Fond sombre inspiré de l'image */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0a0a0a;
             color: #ffffff;
-            font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            min-height: 100vh;
+            padding: 50px 20px;
             margin: 0;
-            padding: 40px 20px;
+            min-height: 100vh;
             box-sizing: border-box;
         }
 
-        /* Conteneur principal du tableau */
-        .dashboard {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            margin-top: 50px;
-        }
-
-        .stat-row {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .stat-label {
+        h1 {
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
             text-align: center;
-            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .btn-link {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 2px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            font-size: 1.2rem;
             font-weight: 600;
             letter-spacing: 1px;
-            color: #e0e0e0;
-        }
-
-        .bar-container-wrapper {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .icon {
-            font-size: 1.5rem;
-            width: 30px;
-            text-align: center;
-        }
-
-        .value {
-            font-family: 'Courier Prime', monospace;
-            font-size: 1.2rem;
-            font-weight: bold;
-            width: 55px;
-            text-align: right;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px 8px;
-            border-radius: 6px;
-        }
-
-        .bar-bg {
-            flex-grow: 1;
-            height: 22px;
-            background-color: #1a1a24;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #2a2a36;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .bar-fill {
-            height: 100%;
-            width: 0%; /* Commence à 0 */
-            border-radius: 12px;
-            /* La transition est définie ici : 2 secondes, effet fluide */
-            transition: width 2s ease-in-out; 
-        }
-
-        /* Dégradés spécifiques pour chaque barre (inspirés de l'image) */
-        #fill-relationship { background: linear-gradient(90deg, #7b2cbf, #ff0a54); box-shadow: 0 0 10px rgba(123, 44, 191, 0.5); }
-        #fill-discipline { background: linear-gradient(90deg, #ff5400, #ff9e00); box-shadow: 0 0 10px rgba(255, 84, 0, 0.5); }
-        #fill-social { background: linear-gradient(90deg, #ffb703, #fb8500); box-shadow: 0 0 10px rgba(255, 183, 3, 0.5); }
-        #fill-mental { background: linear-gradient(90deg, #38b000, #9ef01a); box-shadow: 0 0 10px rgba(56, 176, 0, 0.5); }
-        #fill-physical { background: linear-gradient(90deg, #00b4d8, #90e0ef); box-shadow: 0 0 10px rgba(0, 180, 216, 0.5); }
-        #fill-financial { background: linear-gradient(90deg, #3a0ca3, #4cc9f0); box-shadow: 0 0 10px rgba(58, 12, 163, 0.5); }
-
-        /* Conteneur des boutons d'action (isolé en bas) */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            max-width: 600px;
-            margin-top: 80px; /* Loin du tableau */
+            height: 100%;
         }
 
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: white;
-            transition: transform 0.1s, opacity 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Effets de survol (Hover) */
+        .btn-link:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: #222;
+            border-color: #00d4ff;
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
         }
 
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Couleurs des boutons assorties aux barres */
-        .btn-relationship { background: #7b2cbf; }
-        .btn-discipline { background: #ff5400; }
-        .btn-social { background: #ffb703; color: #000; }
-        .btn-mental { background: #38b000; }
-        .btn-physical { background: #00b4d8; color: #000; }
-        .btn-financial { background: #3a0ca3; }
-
+        /* Couleurs personnalisées au survol pour certains boutons */
+        .btn-link.success:hover { border-color: #ffff00; color: #ffff00; box-shadow: 0 10px 25px rgba(255, 255, 0, 0.3); }
+        .btn-link.danger:hover { border-color: #ff3b30; color: #ff3b30; box-shadow: 0 10px 25px rgba(255, 59, 48, 0.3); }
+        .btn-link.purple:hover { border-color: #7b2cbf; color: #7b2cbf; box-shadow: 0 10px 25px rgba(123, 44, 191, 0.3); }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
-        
-        <div class="stat-row">
-            <div class="stat-label">Relationship</div>
-            <div class="bar-container-wrapper">
-                <div class="icon">👥</div>
-                <div class="value" id="val-relationship">0.0</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="fill-relationship"></div>
-                </div>
-            </div>
-        </div>
+    <h1>Mes Animations Interactives</h1>
 
-        <div class="stat-row">
-            <div class="stat-label">Discipline</div>
-            <div class="bar-container-wrapper">
-                <div class="icon">✊</div>
-                <div class="value" id="val-discipline">0.0</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="fill-discipline"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stat-row">
-            <div class="stat-label">Social</div>
-            <div class="bar-container-wrapper">
-                <div class="icon">👔</div>
-                <div class="value" id="val-social">0.0</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="fill-social"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stat-row">
-            <div class="stat-label">Mental</div>
-            <div class="bar-container-wrapper">
-                <div class="icon">🧠</div>
-                <div class="value" id="val-mental">0.0</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="fill-mental"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stat-row">
-            <div class="stat-label">Physical</div>
-            <div class="bar-container-wrapper">
-                <div class="icon">❤️‍🩹</div>
-                <div class="value" id="val-physical">0.0</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="fill-physical"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="stat-row">
-            <div class="stat-label">Financial</div>
-            <div class="bar-container-wrapper">
-                <div class="icon">💵</div>
-                <div class="value" id="val-financial">0.0</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="fill-financial"></div>
-                </div>
-            </div>
-        </div>
-
+    <div class="grid">
+        <a href="m-d-verre.html" class="btn-link">💧 Motivation vs Discipline</a>
+        <a href="pile-mebro.html" class="btn-link danger">🔋 Recharge Batterie (Bro/Moi)</a>
+        <a href="stickman-course.html" class="btn-link">🏃 Stickman Course</a>
+        <a href="stickman-montagne.html" class="btn-link success">⛰️ Stickman Montagne (Success)</a>
+        <a href="stickman-pompe.html" class="btn-link">💪 Stickman Pompes</a>
+        <a href="stickman-traction.html" class="btn-link">🏋️ Stickman Tractions</a>
+        <a href="ball-terrain.html" class="btn-link">⚽ Course de Balles Stylée</a>
+        <a href="barre-%.html" class="btn-link purple">📊 Dashboard Motivation</a>
+        <a href="bouton.html" class="btn-link">🎛️ Boutons Switch (Argent/Amour)</a>
     </div>
 
-    <div class="controls">
-        <button class="btn btn-relationship" onclick="fillBar('relationship')">Level Up Relationship</button>
-        <button class="btn btn-discipline" onclick="fillBar('discipline')">Level Up Discipline</button>
-        <button class="btn btn-social" onclick="fillBar('social')">Level Up Social</button>
-        <button class="btn btn-mental" onclick="fillBar('mental')">Level Up Mental</button>
-        <button class="btn btn-physical" onclick="fillBar('physical')">Level Up Physical</button>
-        <button class="btn btn-financial" onclick="fillBar('financial')">Level Up Financial</button>
-    </div>
-
-    <script>
-    function animateValue(obj, start, end, duration) {
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = (progress * (end - start) + start).toFixed(1);
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
-        };
-        window.requestAnimationFrame(step);
-    }
-
-    function fillBar(statName) {
-        const barFill = document.getElementById(`fill-${statName}`);
-        const valueDisplay = document.getElementById(`val-${statName}`);
-
-        // SI déjà à 100% → RESET
-        if (barFill.style.width === '100%') {
-            barFill.style.width = '0%';
-            animateValue(valueDisplay, 100, 0, 500); // animation rapide vers 0
-        } else {
-            // SINON → remplir à 100%
-            barFill.style.width = '100%';
-            animateValue(valueDisplay, 0, 100, 2000);
-        }
-    }
-</script>
 </body>
 </html>
